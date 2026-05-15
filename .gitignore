@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# next.js
+.next/
+out/
+build/
+
+# env files (keep .env.example committed)
+.env
+.env*.local
+.env.development
+.env.production
+
+# runtime data
+data/
+*.log
+.DS_Store
+
+# editor / tooling
+.vscode/
+.idea/
+.claude/
+*.swp
+tsconfig.tsbuildinfo
+
+# cloudflared / local tooling
+cloudflared
+/tmp/

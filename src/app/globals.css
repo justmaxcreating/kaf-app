@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --c-bg: #FAF9F6;
+  --c-surface: #FFFFFF;
+  --c-surface-hover: #F5F3EE;
+  --c-surface-active: #EDEAE3;
+  --c-border: #E5E2DC;
+  --c-border-light: #F0EDE8;
+  --c-text: #1A1A1A;
+  --c-text-secondary: #5C5C5C;
+  --c-text-tertiary: #999999;
+  --c-accent: #B07D2E;
+  --c-accent-hover: #966A24;
+  --c-accent-bg: rgba(176, 125, 46, 0.1);
+  --c-success: #3D7A4A;
+  --c-success-bg: rgba(61, 122, 74, 0.1);
+  --c-warning: #C08B1D;
+  --c-warning-bg: rgba(192, 139, 29, 0.1);
+  --c-danger: #C04040;
+  --c-danger-bg: rgba(192, 64, 64, 0.1);
+  --c-info: #3B6FA0;
+  --c-info-bg: rgba(59, 111, 160, 0.1);
+  --c-shadow: rgba(0, 0, 0, 0.06);
+}
+
+.dark {
+  --c-bg: #0C0C0C;
+  --c-surface: #161616;
+  --c-surface-hover: #1E1E1E;
+  --c-surface-active: #262626;
+  --c-border: #2A2A2A;
+  --c-border-light: #1F1F1F;
+  --c-text: #EDEBE7;
+  --c-text-secondary: #8C8C8C;
+  --c-text-tertiary: #555555;
+  --c-accent: #D4A03A;
+  --c-accent-hover: #E0B04A;
+  --c-accent-bg: rgba(212, 160, 58, 0.12);
+  --c-success: #5AA06A;
+  --c-success-bg: rgba(90, 160, 106, 0.12);
+  --c-warning: #D8A030;
+  --c-warning-bg: rgba(216, 160, 48, 0.12);
+  --c-danger: #D05050;
+  --c-danger-bg: rgba(208, 80, 80, 0.12);
+  --c-info: #5090C0;
+  --c-info-bg: rgba(80, 144, 192, 0.12);
+  --c-shadow: rgba(0, 0, 0, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--c-bg);
+  color: var(--c-text);
+  min-height: 100dvh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-border);
+  border-radius: 4px;
+}
+
+/* Utilities */
+@layer utilities {
+  .font-serif {
+    font-family: 'Instrument Serif', Georgia, serif;
+  }
+  .glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+  .animate-pulse-dot {
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+/* Category colors */
+.cat-longdrinks { --cat: #C05040; }
+.cat-bier { --cat: #D4A030; }
+.cat-shots { --cat: #9B4D96; }
+.cat-alkoholfreies { --cat: #3B8BD0; }
+.cat-spritziges { --cat: #E0A050; }

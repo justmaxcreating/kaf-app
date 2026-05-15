@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" fill="none">
+  <!-- Background with warm off-white -->
+  <rect width="192" height="192" rx="40" fill="#FAF9F6"/>
+
+  <!-- Subtle warm gradient overlay -->
+  <defs>
+    <linearGradient id="warmGlow" x1="0" y1="0" x2="192" y2="192">
+      <stop offset="0%" stop-color="#B07D2E" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#B07D2E" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="40" fill="url(#warmGlow)"/>
+
+  <!-- Thin elegant border frame -->
+  <rect x="28" y="58" width="136" height="76" rx="3" stroke="#1A1A1A" stroke-width="2.5" fill="none"/>
+
+  <!-- K - bold sans-serif -->
+  <text x="42" y="114" font-family="system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="48" letter-spacing="-1" fill="#1A1A1A">K</text>
+
+  <!-- a - serif italic, warm accent color -->
+  <text x="80" y="112" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="400" font-size="32" fill="#B07D2E">a</text>
+
+  <!-- F - light sans-serif -->
+  <text x="104" y="114" font-family="system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif" font-weight="200" font-size="48" letter-spacing="3" fill="#1A1A1A">F</text>
+
+  <!-- Small accent dot -->
+  <circle cx="96" cy="148" r="3" fill="#B07D2E" opacity="0.6"/>
+</svg>
