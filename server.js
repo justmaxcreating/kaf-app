@@ -51,14 +51,11 @@ const defaultDrinks = [
   { id: 'berliner-luft', name: 'Berliner Luft', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   { id: 'ficken', name: 'Ficken', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   { id: 'aperol', name: 'Aperol', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'vodka', name: 'Vodka', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'gin', name: 'Gin', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   // Sonstiges
   { id: 'havana-cola', name: 'Havana Cola', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'jaeger-bull', name: 'Jäger - Bull', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'vodka-bull', name: 'Vodka - Bull', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'vodka-mate', name: 'Vodka - Mate', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'gin-tonic', name: 'Gin Tonic', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'sekt-mate', name: 'Sekt-Mate', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'aperol-spritz', name: 'Aperol Spritz', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'tonic', name: 'Tonic', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
   { id: 'sekt', name: 'Sekt', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   { id: 'sekt-alkfrei', name: 'Sekt alkoholfrei', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   { id: 'wasser-spritzig', name: 'Wasser (Spritzig)', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 12, inventory: 0, minStock: 12 },
@@ -67,6 +64,17 @@ const defaultDrinks = [
   { id: 'mate', name: 'Mate', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
   { id: 'red-bull', name: 'Red Bull', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
 ];
+
+// Drinks we explicitly removed — filtered out of loaded store so they
+// disappear even if they exist in the persisted Railway volume.
+const REMOVED_DRINK_IDS = new Set([
+  'jaeger-bull',
+  'vodka-bull',
+  'vodka-mate',
+  'gin-tonic',
+  'sekt-mate',
+  'aperol-spritz',
+]);
 
 // Map legacy categories → new categories (for already-persisted data on Railway volume)
 const CATEGORY_MIGRATION = {
@@ -90,9 +98,11 @@ function loadStore() {
       const raw = fs.readFileSync(STORE_FILE, 'utf8');
       const data = JSON.parse(raw);
 
-      // Migrate legacy categories + ensure all default drinks exist (by id)
+      // Migrate legacy categories + drop removed drinks + ensure default drinks exist
       let drinks = Array.isArray(data.drinks) && data.drinks.length
-        ? data.drinks.map(d => ({ ...d, category: migrateCategory(d.category) }))
+        ? data.drinks
+            .filter(d => !REMOVED_DRINK_IDS.has(d.id))
+            .map(d => ({ ...d, category: migrateCategory(d.category) }))
         : JSON.parse(JSON.stringify(defaultDrinks));
 
       const existingIds = new Set(drinks.map(d => d.id));
