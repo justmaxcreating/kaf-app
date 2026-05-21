@@ -67,8 +67,17 @@ body {
   padding: 0;
   background: var(--c-bg);
   color: var(--c-text);
-  min-height: 100dvh;
+  min-height: 100vh;      /* fallback for old browsers */
+  min-height: 100dvh;     /* modern browsers */
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Tailwind's min-h-dvh utility falls back to 100dvh only — old Chrome
+   (e.g. Sony Xperia Tablet Z) ignores it and the layout collapses.
+   Override with a vh fallback first. */
+.min-h-dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Scrollbar */
@@ -90,8 +99,14 @@ body {
     font-family: 'Instrument Serif', Georgia, serif;
   }
   .glass {
+    /* Fallback: solid translucent bg if backdrop-filter isn't supported
+       (old Android Chrome / older WebView). Modern browsers get the blur. */
+    background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+  }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .glass { background-color: transparent; }
   }
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
