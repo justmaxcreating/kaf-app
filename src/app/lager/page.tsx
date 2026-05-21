@@ -735,7 +735,7 @@ function LagerPageInner() {
             </div>
 
             {/* Drinks by category */}
-            {(['longdrinks', 'bier', 'shots', 'alkoholfreies', 'spritziges'] as DrinkCategory[]).map(cat => {
+            {(['bier', 'schnaps', 'sonstiges'] as DrinkCategory[]).map(cat => {
               const catDrinks = (groupedCategories as Record<string, Drink[]>)[cat];
               if (!catDrinks?.length) return null;
               return (

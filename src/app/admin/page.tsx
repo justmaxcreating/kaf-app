@@ -44,7 +44,7 @@ function AddDrinkModal({ onClose, onAdd }: {
           <div>
             <label className="text-xs font-medium text-kaf-text-secondary uppercase tracking-wider mb-1.5 block">Kategorie</label>
             <div className="grid grid-cols-3 gap-2">
-              {(['longdrinks', 'bier', 'shots', 'alkoholfreies', 'spritziges'] as DrinkCategory[]).map(cat => (
+              {(['bier', 'schnaps', 'sonstiges'] as DrinkCategory[]).map(cat => (
                 <button
                   key={cat}
                   onClick={() => setCategory(cat)}
@@ -374,7 +374,7 @@ function AdminPageInner() {
               Tippe auf die Zahl um den Bestand direkt zu ändern. Werte werden in Flaschen angegeben.
             </p>
 
-            {(['longdrinks', 'bier', 'shots', 'alkoholfreies', 'spritziges'] as DrinkCategory[]).map(cat => {
+            {(['bier', 'schnaps', 'sonstiges'] as DrinkCategory[]).map(cat => {
               const catDrinks = drinks.filter(d => d.category === cat);
               if (!catDrinks.length) return null;
               return (
@@ -451,7 +451,7 @@ function AdminPageInner() {
                   onClick={() => {
                     if (!confirm('Alle Bestände auf Beispielwerte setzen (20-100)?')) return;
                     drinks.forEach(d => {
-                      const val = d.category === 'shots' ? 10 : d.category === 'longdrinks' || d.category === 'spritziges' ? 15 : 48;
+                      const val = d.category === 'schnaps' ? 10 : d.category === 'bier' ? 48 : 24;
                       setInventory(d.id, val);
                     });
                     showToast('Beispielbestand gesetzt');

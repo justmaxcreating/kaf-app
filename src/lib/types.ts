@@ -1,4 +1,4 @@
-export type DrinkCategory = 'longdrinks' | 'bier' | 'shots' | 'alkoholfreies' | 'spritziges';
+export type DrinkCategory = 'bier' | 'schnaps' | 'sonstiges';
 export type DrinkUnit = 'flasche' | 'kiste';
 export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
 export type UserRole = 'bar' | 'lager' | 'admin';
@@ -48,19 +48,15 @@ export interface ConnectedUser {
 }
 
 export const CATEGORY_LABELS: Record<DrinkCategory, string> = {
-  longdrinks: 'Longdrinks',
   bier: 'Bier',
-  shots: 'Shots',
-  alkoholfreies: 'Alkoholfreies',
-  spritziges: 'Spritziges',
+  schnaps: 'Schnaps',
+  sonstiges: 'Sonstiges',
 };
 
 export const CATEGORY_ICONS: Record<DrinkCategory, string> = {
-  longdrinks: '🍹',
   bier: '🍺',
-  shots: '🥃',
-  alkoholfreies: '💧',
-  spritziges: '🥂',
+  schnaps: '🥃',
+  sonstiges: '🥂',
 };
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {

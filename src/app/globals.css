@@ -123,8 +123,6 @@ body {
 }
 
 /* Category colors */
-.cat-longdrinks { --cat: #C05040; }
 .cat-bier { --cat: #D4A030; }
-.cat-shots { --cat: #9B4D96; }
-.cat-alkoholfreies { --cat: #3B8BD0; }
-.cat-spritziges { --cat: #E0A050; }
+.cat-schnaps { --cat: #9B4D96; }
+.cat-sonstiges { --cat: #3B8BD0; }

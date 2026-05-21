@@ -155,7 +155,7 @@ function OrderModal({
             type="text"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="z.B. Für Tresen links"
+            placeholder="z.B. Für Bierbar"
             className="w-full px-4 py-3 rounded-xl bg-kaf-surface-hover border border-kaf-border text-sm placeholder:text-kaf-text-tertiary focus:outline-none focus:ring-2 focus:ring-kaf-accent/30"
           />
         </div>
@@ -321,7 +321,7 @@ function DrinkCard({ drink, onClick }: { drink: Drink; onClick: () => void }) {
 }
 
 // ─── Main Page ────────────────────────────────────────────
-const CATEGORIES: DrinkCategory[] = ['longdrinks', 'bier', 'shots', 'alkoholfreies', 'spritziges'];
+const CATEGORIES: DrinkCategory[] = ['bier', 'schnaps', 'sonstiges'];
 
 function BarPageInner() {
   const router = useRouter();

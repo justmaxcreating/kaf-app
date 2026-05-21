@@ -17,18 +17,23 @@ const VAPID_CONTACT = process.env.VAPID_CONTACT || 'mailto:kaf@festival.local';
 
 webpush.setVapidDetails(VAPID_CONTACT, VAPID_PUBLIC, VAPID_PRIVATE);
 
-// Store push subscriptions
-const pushSubscriptions = new Map(); // socketId -> subscription
+// Push subscriptions keyed by endpoint URL (stable per browser/device).
+// Survives socket disconnect — so push arrives even when phone is locked
+// and Socket.IO connection has dropped.
+const pushSubscriptions = new Map(); // endpoint -> subscription
 
 function sendPushToAll(title, body) {
-  pushSubscriptions.forEach((sub, id) => {
+  let pruned = false;
+  pushSubscriptions.forEach((sub, endpoint) => {
     webpush.sendNotification(sub, JSON.stringify({ title, body })).catch(err => {
-      console.log(`[KAF] Push fehlgeschlagen für ${id}:`, err.statusCode);
+      console.log(`[KAF] Push fehlgeschlagen (${err.statusCode}):`, endpoint.slice(-20));
       if (err.statusCode === 410 || err.statusCode === 404) {
-        pushSubscriptions.delete(id);
+        pushSubscriptions.delete(endpoint);
+        pruned = true;
       }
     });
   });
+  if (pruned) saveStore();
 }
 
 const app = next({ dev });
@@ -36,30 +41,43 @@ const handle = app.getRequestHandler();
 
 // ─── Default Drinks ───────────────────────────────────────
 const defaultDrinks = [
-  // Longdrinks
-  { id: 'havana-cola', name: 'Havana Cola', category: 'longdrinks', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'jaeger-bull', name: 'Jäger - Bull', category: 'longdrinks', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'vodka-bull', name: 'Vodka - Bull', category: 'longdrinks', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'vodka-mate', name: 'Vodka - Mate', category: 'longdrinks', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'gin-tonic', name: 'Gin Tonic', category: 'longdrinks', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   // Bier
   { id: 'kesselring-pils', name: 'Kesselring Pils', category: 'bier', units: ['flasche', 'kiste'], bottlesPerCrate: 20, inventory: 0, minStock: 10 },
   { id: 'kesselring-naturradler', name: 'Kesselring Naturradler', category: 'bier', units: ['flasche', 'kiste'], bottlesPerCrate: 20, inventory: 0, minStock: 10 },
   { id: 'kesselring-landbier', name: 'Kesselring Landbier Hell', category: 'bier', units: ['flasche', 'kiste'], bottlesPerCrate: 20, inventory: 0, minStock: 10 },
   { id: 'kesselring-alkfrei', name: 'Kesselring Pils alkoholfrei', category: 'bier', units: ['flasche', 'kiste'], bottlesPerCrate: 20, inventory: 0, minStock: 10 },
-  // Shots
-  { id: 'jaegermeister', name: 'Jägermeister', category: 'shots', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'berliner-luft', name: 'Berliner Luft', category: 'shots', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'ficken', name: 'Ficken', category: 'shots', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  // Alkoholfreies
-  { id: 'wasser-spritzig', name: 'Wasser (Spritzig)', category: 'alkoholfreies', units: ['flasche', 'kiste'], bottlesPerCrate: 12, inventory: 0, minStock: 12 },
-  { id: 'cola', name: 'Cola', category: 'alkoholfreies', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
-  { id: 'mate', name: 'Mate', category: 'alkoholfreies', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
-  { id: 'red-bull', name: 'Red Bull', category: 'alkoholfreies', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
-  // Spritziges
-  { id: 'sekt-mate', name: 'Sekt-Mate', category: 'spritziges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
-  { id: 'aperol-spritz', name: 'Aperol Spritz', category: 'spritziges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  // Schnaps (Hochprozentiges)
+  { id: 'jaegermeister', name: 'Jägermeister', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'berliner-luft', name: 'Berliner Luft', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'ficken', name: 'Ficken', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'aperol', name: 'Aperol', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  // Sonstiges
+  { id: 'havana-cola', name: 'Havana Cola', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'jaeger-bull', name: 'Jäger - Bull', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'vodka-bull', name: 'Vodka - Bull', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'vodka-mate', name: 'Vodka - Mate', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'gin-tonic', name: 'Gin Tonic', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'sekt-mate', name: 'Sekt-Mate', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'aperol-spritz', name: 'Aperol Spritz', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'sekt', name: 'Sekt', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'sekt-alkfrei', name: 'Sekt alkoholfrei', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'wasser-spritzig', name: 'Wasser (Spritzig)', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 12, inventory: 0, minStock: 12 },
+  { id: 'wasser-still', name: 'Wasser (Still)', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 12, inventory: 0, minStock: 12 },
+  { id: 'cola', name: 'Cola', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
+  { id: 'mate', name: 'Mate', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
+  { id: 'red-bull', name: 'Red Bull', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
 ];
+
+// Map legacy categories → new categories (for already-persisted data on Railway volume)
+const CATEGORY_MIGRATION = {
+  longdrinks: 'sonstiges',
+  alkoholfreies: 'sonstiges',
+  spritziges: 'sonstiges',
+  shots: 'schnaps',
+};
+function migrateCategory(c) {
+  return CATEGORY_MIGRATION[c] || c;
+}
 
 // ─── Persistence ──────────────────────────────────────────
 // Railway: mount a volume at /data and set DATA_DIR=/data
@@ -71,11 +89,25 @@ function loadStore() {
     if (fs.existsSync(STORE_FILE)) {
       const raw = fs.readFileSync(STORE_FILE, 'utf8');
       const data = JSON.parse(raw);
-      console.log(`[KAF] Store geladen: ${data.drinks?.length || 0} Getränke, ${data.orders?.length || 0} Bestellungen`);
-      return {
-        drinks: Array.isArray(data.drinks) && data.drinks.length ? data.drinks : JSON.parse(JSON.stringify(defaultDrinks)),
-        orders: Array.isArray(data.orders) ? data.orders : [],
-      };
+
+      // Migrate legacy categories + ensure all default drinks exist (by id)
+      let drinks = Array.isArray(data.drinks) && data.drinks.length
+        ? data.drinks.map(d => ({ ...d, category: migrateCategory(d.category) }))
+        : JSON.parse(JSON.stringify(defaultDrinks));
+
+      const existingIds = new Set(drinks.map(d => d.id));
+      for (const def of defaultDrinks) {
+        if (!existingIds.has(def.id)) drinks.push({ ...def });
+      }
+
+      const orders = Array.isArray(data.orders)
+        ? data.orders.map(o => ({ ...o, category: migrateCategory(o.category) }))
+        : [];
+
+      const pushSubs = Array.isArray(data.pushSubs) ? data.pushSubs : [];
+
+      console.log(`[KAF] Store geladen: ${drinks.length} Getränke, ${orders.length} Bestellungen, ${pushSubs.length} Push-Subs`);
+      return { drinks, orders, pushSubs };
     }
   } catch (err) {
     console.error('[KAF] Store laden fehlgeschlagen, nutze Defaults:', err.message);
@@ -83,6 +115,7 @@ function loadStore() {
   return {
     drinks: JSON.parse(JSON.stringify(defaultDrinks)),
     orders: [],
+    pushSubs: [],
   };
 }
 
@@ -94,7 +127,12 @@ function saveStore() {
     try {
       if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
       const tmp = STORE_FILE + '.tmp';
-      fs.writeFileSync(tmp, JSON.stringify({ drinks: store.drinks, orders: store.orders }, null, 2));
+      const payload = {
+        drinks: store.drinks,
+        orders: store.orders,
+        pushSubs: Array.from(pushSubscriptions.values()),
+      };
+      fs.writeFileSync(tmp, JSON.stringify(payload, null, 2));
       fs.renameSync(tmp, STORE_FILE);
     } catch (err) {
       console.error('[KAF] Store speichern fehlgeschlagen:', err.message);
@@ -109,6 +147,11 @@ const store = {
   orders: loaded.orders,
   connectedUsers: new Map(), // socketId -> { name, role } (not persisted)
 };
+
+// Rehydrate push subscriptions from disk, keyed by endpoint (stable per device)
+for (const sub of loaded.pushSubs) {
+  if (sub && sub.endpoint) pushSubscriptions.set(sub.endpoint, sub);
+}
 
 function uid() {
   return crypto.randomUUID();
@@ -142,14 +185,28 @@ app.prepare().then(() => {
 
     // ── Push Subscription ──
     socket.on('push:subscribe', (subscription, cb) => {
-      pushSubscriptions.set(socket.id, subscription);
-      console.log(`[KAF] Push-Subscription registriert: ${socket.id}`);
+      if (!subscription || !subscription.endpoint) {
+        if (cb) cb({ error: 'Ungültige Subscription' });
+        return;
+      }
+      const isNew = !pushSubscriptions.has(subscription.endpoint);
+      pushSubscriptions.set(subscription.endpoint, subscription);
+      if (isNew) {
+        console.log(`[KAF] Push-Subscription registriert (${pushSubscriptions.size} total)`);
+        saveStore();
+      }
+      if (cb) cb({ ok: true });
+    });
+
+    socket.on('push:unsubscribe', ({ endpoint }, cb) => {
+      if (endpoint && pushSubscriptions.delete(endpoint)) saveStore();
       if (cb) cb({ ok: true });
     });
 
     socket.on('disconnect', () => {
       store.connectedUsers.delete(socket.id);
-      pushSubscriptions.delete(socket.id);
+      // NOTE: do NOT remove push subscription here — it must survive disconnect
+      // so the device receives pushes while the app is backgrounded / phone is locked.
       io.emit('users:updated', getUsers());
       console.log(`[KAF] Client getrennt: ${socket.id}`);
     });
