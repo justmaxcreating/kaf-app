@@ -182,7 +182,7 @@ function InventoryItem({
               style={{ width: `${pct}%` }}
             />
           </div>
-          <span className="text-xs font-mono text-kaf-text-secondary w-10 text-right">{drink.inventory}</span>
+          <span className="text-xs font-mono text-kaf-text-secondary w-14 text-right">{drink.inventory} Fl.</span>
         </div>
       </div>
       <div className="flex items-center gap-1">

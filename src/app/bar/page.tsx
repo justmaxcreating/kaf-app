@@ -59,8 +59,19 @@ function OrderModal({
   onClose: () => void;
   onAddToCart: (item: CartItem) => void;
 }) {
+  // For Bier: force Kiste-only ordering while a full crate is in stock.
+  // Once inventory drops below a crate, fall back to single bottles so the
+  // last few can still be ordered.
+  const availableUnits: string[] = (() => {
+    if (drink.category === 'bier' && drink.units.includes('kiste')) {
+      if (drink.inventory >= drink.bottlesPerCrate) return ['kiste'];
+      return ['flasche'];
+    }
+    return drink.units;
+  })();
+
   const [quantity, setQuantity] = useState(1);
-  const [unit, setUnit] = useState<string>(drink.units[0]);
+  const [unit, setUnit] = useState<string>(availableUnits[0]);
   const [note, setNote] = useState('');
 
   const bottleCount = unit === 'kiste' ? quantity * drink.bottlesPerCrate : quantity;
@@ -98,11 +109,11 @@ function OrderModal({
         </div>
 
         {/* Unit Selector */}
-        {drink.units.length > 1 && (
+        {availableUnits.length > 1 && (
           <div className="mb-5">
             <label className="text-xs font-medium text-kaf-text-secondary uppercase tracking-wider mb-2 block">Einheit</label>
             <div className="grid grid-cols-2 gap-2">
-              {drink.units.map((u) => (
+              {availableUnits.map((u) => (
                 <button
                   key={u}
                   onClick={() => { setUnit(u); setQuantity(1); }}
