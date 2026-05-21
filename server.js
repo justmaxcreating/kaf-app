@@ -53,8 +53,8 @@ const defaultDrinks = [
   { id: 'aperol', name: 'Aperol', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   { id: 'vodka', name: 'Vodka', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   { id: 'gin', name: 'Gin', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
+  { id: 'havana', name: 'Havana', category: 'schnaps', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   // Sonstiges
-  { id: 'havana-cola', name: 'Havana Cola', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   { id: 'tonic', name: 'Tonic', category: 'sonstiges', units: ['flasche', 'kiste'], bottlesPerCrate: 24, inventory: 0, minStock: 12 },
   { id: 'sekt', name: 'Sekt', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
   { id: 'sekt-alkfrei', name: 'Sekt alkoholfrei', category: 'sonstiges', units: ['flasche'], bottlesPerCrate: 1, inventory: 0, minStock: 2 },
@@ -74,7 +74,18 @@ const REMOVED_DRINK_IDS = new Set([
   'gin-tonic',
   'sekt-mate',
   'aperol-spritz',
+  'havana-cola',
 ]);
+
+// Drink names to strip on load (case-insensitive). Use for one-off cleanups
+// of drinks that were added via the admin UI and got a random uuid as id.
+const REMOVED_DRINK_NAMES = new Set(['test']);
+
+function isRemovedDrink(d) {
+  if (REMOVED_DRINK_IDS.has(d.id)) return true;
+  if (d.name && REMOVED_DRINK_NAMES.has(d.name.trim().toLowerCase())) return true;
+  return false;
+}
 
 // Map legacy categories → new categories (for already-persisted data on Railway volume)
 const CATEGORY_MIGRATION = {
@@ -101,7 +112,7 @@ function loadStore() {
       // Migrate legacy categories + drop removed drinks + ensure default drinks exist
       let drinks = Array.isArray(data.drinks) && data.drinks.length
         ? data.drinks
-            .filter(d => !REMOVED_DRINK_IDS.has(d.id))
+            .filter(d => !isRemovedDrink(d))
             .map(d => ({ ...d, category: migrateCategory(d.category) }))
         : JSON.parse(JSON.stringify(defaultDrinks));
 
