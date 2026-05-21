@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import PullToRefresh from './PullToRefresh';
 
 export const metadata: Metadata = {
   title: 'KAF – Klein aber Fein',
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-kaf-bg text-kaf-text antialiased">
+        <PullToRefresh />
         {children}
       </body>
     </html>
