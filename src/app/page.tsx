@@ -32,18 +32,16 @@ function ThemeToggle() {
 function Logo() {
   return (
     <div className="flex flex-col items-center">
-      <div className="relative border-2 border-kaf-text px-6 py-3 sm:px-8 sm:py-4">
-        <span className="absolute -top-2.5 -right-2.5 px-2 py-0.5 rounded-full bg-kaf-accent text-white text-[10px] font-bold tracking-widest uppercase shadow-kaf">
+      <div className="relative">
+        <span className="absolute -top-2.5 -right-2.5 z-10 px-2 py-0.5 rounded-full bg-kaf-accent text-white text-[10px] font-bold tracking-widest uppercase shadow-kaf">
           Beta
         </span>
-        <div className="flex items-baseline gap-1 sm:gap-2">
-          <span className="text-3xl sm:text-5xl font-extrabold tracking-tight">KLEIN</span>
-          <span className="font-serif italic text-xl sm:text-3xl -mx-1">aber</span>
-          <span className="text-3xl sm:text-5xl font-light tracking-[0.15em]">FEIN</span>
-        </div>
-        <div className="text-[10px] sm:text-xs tracking-[0.2em] text-right mt-0.5 text-kaf-text-secondary">
-          Das Kreativ-Kollektiv
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/kaf_logo.png"
+          alt="Klein aber Fein"
+          className="block w-56 sm:w-72 h-auto dark:invert"
+        />
       </div>
     </div>
   );
