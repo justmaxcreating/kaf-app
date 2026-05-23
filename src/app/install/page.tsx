@@ -5,15 +5,14 @@ import { useRouter } from 'next/navigation';
 
 export default function InstallPage() {
   const router = useRouter();
-  const [platform, setPlatform] = useState<'ios' | 'android' | 'desktop'>('android');
+  const [platform, setPlatform] = useState<'ios' | 'android'>('android');
   const [notifPermission, setNotifPermission] = useState<string>('default');
 
   useEffect(() => {
     // Detect platform
     const ua = navigator.userAgent.toLowerCase();
     if (/iphone|ipad|ipod/.test(ua)) setPlatform('ios');
-    else if (/android/.test(ua)) setPlatform('android');
-    else setPlatform('desktop');
+    else setPlatform('android');
 
     if ('Notification' in window) {
       setNotifPermission(Notification.permission);
@@ -63,7 +62,6 @@ export default function InstallPage() {
           {[
             { id: 'ios' as const, label: 'iPhone', icon: '🍎' },
             { id: 'android' as const, label: 'Android', icon: '🤖' },
-            { id: 'desktop' as const, label: 'Desktop', icon: '💻' },
           ].map(p => (
             <button
               key={p.id}
@@ -83,25 +81,45 @@ export default function InstallPage() {
         {platform === 'ios' && (
           <div className="space-y-4 animate-fade-in">
             <div className="bg-kaf-surface rounded-2xl border border-kaf-border p-5">
-              <h3 className="font-semibold mb-4">So geht&apos;s auf dem iPhone:</h3>
+              <h3 className="font-semibold mb-1">So geht&apos;s auf dem iPhone</h3>
+              <p className="text-xs text-kaf-text-secondary mb-5">Folge den Schritten der Reihe nach.</p>
               <div className="space-y-5">
-                <Step n={1} title="Safari öffnen">
+                <Step n={1} title="Vorbereitung">
+                  Stell sicher, dass <strong>Benachrichtigungen aktiviert</strong> sind und dein Handy <strong>auf laut</strong> steht.
+                </Step>
+                <Step n={2} title="Seite in Safari öffnen">
                   Öffne diese Seite in <strong>Safari</strong> (nicht Chrome oder Firefox — nur Safari unterstützt die Installation auf iOS).
                 </Step>
-                <Step n={2} title="Teilen-Button antippen">
-                  Tippe unten in Safari auf das <strong>Teilen-Symbol</strong> (das Quadrat mit dem Pfeil nach oben ⬆️).
+                <Step n={3} title="Menü öffnen">
+                  Tippe auf die <strong>drei Punkte</strong> (…) in der Adressleiste.
                 </Step>
-                <Step n={3} title='„Zum Home-Bildschirm"'>
-                  Scrolle in der Liste nach unten und tippe auf <strong>„Zum Home-Bildschirm"</strong>.
+                <Step n={4} title='„Teilen / Share"'>
+                  Tippe auf <strong>„Teilen"</strong> bzw. <strong>„Share"</strong>.
                 </Step>
-                <Step n={4} title="Fertig!">
-                  Tippe auf <strong>„Hinzufügen"</strong>. Die App erscheint auf deinem Home-Bildschirm wie eine echte App — ohne Browser-Leiste!
+                <Step n={5} title='„Mehr anzeigen"'>
+                  Tippe auf <strong>„View more"</strong> bzw. <strong>„Mehr anzeigen"</strong>, um alle Optionen zu sehen.
+                </Step>
+                <Step n={6} title="Zum Startbildschirm hinzufügen">
+                  Tippe auf <strong>„Zum Startbildschirm hinzufügen"</strong>. Die App erscheint danach auf deinem Home-Bildschirm.
+                </Step>
+                <Step n={7} title="App öffnen & Namen eingeben">
+                  Öffne die App vom Startbildschirm und gib deinen <strong>Namen</strong> ein.
+                </Step>
+                <Step n={8} title="Rolle wählen">
+                  Tippe auf <strong>„Lager"</strong> (bzw. deine Rolle).
+                </Step>
+                <Step n={9} title="Benachrichtigungen zulassen">
+                  Wenn die App fragt: <strong>unbedingt erlauben!</strong> Sonst kommen keine Bestellungen rein.
+                </Step>
+                <Step n={10} title="Im Hintergrund laufen lassen">
+                  Lass die App <strong>im Hintergrund geöffnet</strong>, damit die Benachrichtigungen zuverlässig ankommen.
                 </Step>
               </div>
             </div>
+
             <div className="bg-kaf-warning-bg rounded-xl p-4 border border-kaf-warning/20">
               <p className="text-xs text-kaf-text-secondary">
-                <strong className="text-kaf-warning">⚠️ Wichtig:</strong> Auf dem iPhone funktionieren Benachrichtigungen nur, wenn die App über Safari zum Home-Bildschirm hinzugefügt wurde.
+                <strong className="text-kaf-warning">⚠️ Hinweis:</strong> Bei schlechtem Internet kommen Benachrichtigungen manchmal nicht durch. Bitte ab und zu die App checken und aktualisieren — danke!
               </p>
             </div>
           </div>
@@ -111,41 +129,40 @@ export default function InstallPage() {
         {platform === 'android' && (
           <div className="space-y-4 animate-fade-in">
             <div className="bg-kaf-surface rounded-2xl border border-kaf-border p-5">
-              <h3 className="font-semibold mb-4">So geht&apos;s auf Android:</h3>
+              <h3 className="font-semibold mb-1">So geht&apos;s auf Android</h3>
+              <p className="text-xs text-kaf-text-secondary mb-5">Folge den Schritten der Reihe nach.</p>
               <div className="space-y-5">
-                <Step n={1} title="Chrome öffnen">
+                <Step n={1} title="Vorbereitung">
+                  Stell sicher, dass <strong>Benachrichtigungen für den Browser aktiviert</strong> sind und dein Handy <strong>auf laut</strong> steht.
+                </Step>
+                <Step n={2} title="Seite in Chrome öffnen">
                   Öffne diese Seite in <strong>Google Chrome</strong>.
                 </Step>
-                <Step n={2} title="Menü öffnen">
+                <Step n={3} title="Menü öffnen">
                   Tippe oben rechts auf die <strong>drei Punkte</strong> (⋮).
                 </Step>
-                <Step n={3} title='„App installieren"'>
-                  Tippe auf <strong>„App installieren"</strong> oder <strong>„Zum Startbildschirm hinzufügen"</strong>.
+                <Step n={4} title="Zum Startbildschirm hinzufügen">
+                  Tippe auf <strong>„Zum Startbildschirm hinzufügen"</strong> bzw. <strong>„App installieren"</strong> und bestätige.
                 </Step>
-                <Step n={4} title="Bestätigen">
-                  Tippe auf <strong>„Installieren"</strong>. Die App erscheint auf deinem Startbildschirm!
+                <Step n={5} title="App öffnen & Namen eingeben">
+                  Öffne die App vom Startbildschirm und gib deinen <strong>Namen</strong> ein.
+                </Step>
+                <Step n={6} title="Rolle wählen">
+                  Tippe auf <strong>„Lager"</strong> (bzw. deine Rolle).
+                </Step>
+                <Step n={7} title="Glocke aktivieren">
+                  Tippe oben rechts auf die <strong>Glocke</strong> 🔔 und aktiviere die Benachrichtigungen.
+                </Step>
+                <Step n={8} title="Im Hintergrund laufen lassen">
+                  Lass die App <strong>im Hintergrund geöffnet</strong>, damit die Benachrichtigungen zuverlässig ankommen.
                 </Step>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Desktop Instructions */}
-        {platform === 'desktop' && (
-          <div className="space-y-4 animate-fade-in">
-            <div className="bg-kaf-surface rounded-2xl border border-kaf-border p-5">
-              <h3 className="font-semibold mb-4">So geht&apos;s am Computer:</h3>
-              <div className="space-y-5">
-                <Step n={1} title="Chrome oder Edge öffnen">
-                  Öffne diese Seite in <strong>Chrome</strong> oder <strong>Edge</strong>.
-                </Step>
-                <Step n={2} title="Installieren">
-                  Klicke in der Adressleiste auf das <strong>Installations-Symbol</strong> (📥) oder gehe ins Menü → <strong>„App installieren"</strong>.
-                </Step>
-                <Step n={3} title="Fertig!">
-                  Die App öffnet sich in einem eigenen Fenster ohne Browser-Leiste.
-                </Step>
-              </div>
+            <div className="bg-kaf-warning-bg rounded-xl p-4 border border-kaf-warning/20">
+              <p className="text-xs text-kaf-text-secondary">
+                <strong className="text-kaf-warning">⚠️ Hinweis:</strong> Bei schlechtem Internet kommen Benachrichtigungen manchmal nicht durch. Bitte ab und zu die App checken und aktualisieren — danke!
+              </p>
             </div>
           </div>
         )}

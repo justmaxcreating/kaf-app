@@ -32,7 +32,10 @@ function ThemeToggle() {
 function Logo() {
   return (
     <div className="flex flex-col items-center">
-      <div className="border-2 border-kaf-text px-6 py-3 sm:px-8 sm:py-4">
+      <div className="relative border-2 border-kaf-text px-6 py-3 sm:px-8 sm:py-4">
+        <span className="absolute -top-2.5 -right-2.5 px-2 py-0.5 rounded-full bg-kaf-accent text-white text-[10px] font-bold tracking-widest uppercase shadow-kaf">
+          Beta
+        </span>
         <div className="flex items-baseline gap-1 sm:gap-2">
           <span className="text-3xl sm:text-5xl font-extrabold tracking-tight">KLEIN</span>
           <span className="font-serif italic text-xl sm:text-3xl -mx-1">aber</span>
@@ -189,7 +192,11 @@ export default function HomePage() {
         </button>
 
         {/* Version */}
-        <p className="text-[10px] text-kaf-text-tertiary">KAF Getränke-Service v1.0</p>
+        <p className="text-[10px] text-kaf-text-tertiary text-center">
+          KAF Getränke-Service · Beta
+          <br />
+          <span className="text-kaf-text-tertiary/70">Noch im Test — Fehler bitte melden 🙏</span>
+        </p>
       </div>
 
       {/* QR Code Modal */}
